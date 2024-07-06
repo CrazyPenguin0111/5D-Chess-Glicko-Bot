@@ -414,49 +414,50 @@ async def leaderboard(ctx, rk: int = None):
 
         author_name = ctx.author.name
 
-        if player_data[0] < 4:
-            response += "\nYou must report at least 4 rated matches to be placed on the leaderboard."
-        else:
-            c.execute(
-                'SELECT * FROM players WHERE last_match >= ? AND matches_played >= 4 ORDER BY rating DESC',
-                (three_months_ago.isoformat(),))
-            ranked_list = c.fetchall()
-            for index, player_data in enumerate(ranked_list):
-                rank = index + 1
-                if rk is None:
-                    if player_data and author_name not in response:
-                        if player_data[0] == ctx.author.id:
+        if player_data:
+            if player_data[0] < 4:
+                response += "\nYou must report at least 4 rated matches to be placed on the leaderboard."
+            else:
+                c.execute(
+                    'SELECT * FROM players WHERE last_match >= ? AND matches_played >= 4 ORDER BY rating DESC',
+                    (three_months_ago.isoformat(),))
+                ranked_list = c.fetchall()
+                for index, player_data in enumerate(ranked_list):
+                    rank = index + 1
+                    if rk is None:
+                        if player_data and author_name not in response:
+                            if player_data[0] == ctx.author.id:
 
-                            if rank > 1:
-                                player_data_up = ranked_list[rank - 1]
-                                h_user = get_fetch_user(bot, player_data_up[0])
-                                h_user_name = h_user.name
-                                response += f"\n{rank - 1}. {h_user_name} {round(player_data_up[1], 1)}"
+                                if rank > 1:
+                                    player_data_up = ranked_list[rank - 1]
+                                    h_user = get_fetch_user(bot, player_data_up[0])
+                                    h_user_name = h_user.name
+                                    response += f"\n{rank - 1}. {h_user_name} {round(player_data_up[1], 1)}"
 
-                            response += f"\n{rank}. {ctx.author.name} {round(player_data[1],1)}"
+                                response += f"\n{rank}. {ctx.author.name} {round(player_data[1],1)}"
 
-                            if rank < len(ranked_list):
+                                if rank < len(ranked_list):
+                                    player_data_down = ranked_list[rank + 1]
+                                    d_user = get_fetch_user(bot, player_data_down[0])
+                                    d_user_name = d_user.name
+                                    response += f"\n{rank + 1}. {d_user_name} {round(player_data_down[1], 1)}"
+                    else:
+                        if rank == rk and rk > 9:
+
+                            player_data_up = ranked_list[rank - 1]
+                            h_user = get_fetch_user(bot, player_data_up[0])
+                            h_user_name = h_user.name
+                            response += f"\n{rank - 1}. {h_user_name} {round(player_data_up[1], 1)}"
+
+                            user = get_fetch_user(bot, player_data[0])
+                            user_name = user.name
+                            response += f"\n{rank}. {user_name} {round(player_data[1], 1)}"
+
+                            if rk < len(ranked_list):
                                 player_data_down = ranked_list[rank + 1]
                                 d_user = get_fetch_user(bot, player_data_down[0])
                                 d_user_name = d_user.name
                                 response += f"\n{rank + 1}. {d_user_name} {round(player_data_down[1], 1)}"
-                else:
-                    if rank == rk and rk > 9:
-
-                        player_data_up = ranked_list[rank - 1]
-                        h_user = get_fetch_user(bot, player_data_up[0])
-                        h_user_name = h_user.name
-                        response += f"\n{rank - 1}. {h_user_name} {round(player_data_up[1], 1)}"
-
-                        user = get_fetch_user(bot, player_data[0])
-                        user_name = user.name
-                        response += f"\n{rank}. {user_name} {round(player_data[1], 1)}"
-
-                        if rk < len(ranked_list):
-                            player_data_down = ranked_list[rank + 1]
-                            d_user = get_fetch_user(bot, player_data_down[0])
-                            d_user_name = d_user.name
-                            response += f"\n{rank + 1}. {d_user_name} {round(player_data_down[1], 1)}"
 
 
         embed = discord.Embed(description=response)
@@ -487,49 +488,50 @@ async def stale_leaderboard(ctx, rk: int = None):
 
         author_name = ctx.author.name
 
-        if player_data[0] < 4:
-            response += "\nYou must report at least 4 rated matches to be placed on the leaderboard."
-        else:
-            c.execute(
-                'SELECT * FROM players WHERE matches_played >= 4 ORDER BY rating DESC'
-            )
-            ranked_list = c.fetchall()
-            for index, player_data in enumerate(ranked_list):
-                rank = index + 1
-                if rk is None:
-                    if player_data and author_name not in response:
-                        if player_data[0] == ctx.author.id:
+        if player_data:
+            if player_data[0] < 4:
+                response += "\nYou must report at least 4 rated matches to be placed on the leaderboard."
+            else:
+                c.execute(
+                    'SELECT * FROM players WHERE matches_played >= 4 ORDER BY rating DESC'
+                )
+                ranked_list = c.fetchall()
+                for index, player_data in enumerate(ranked_list):
+                    rank = index + 1
+                    if rk is None:
+                        if player_data and author_name not in response:
+                            if player_data[0] == ctx.author.id:
 
-                            if rank > 1:
-                                player_data_up = ranked_list[rank - 1]
-                                h_user = get_fetch_user(bot, player_data_up[0])
-                                h_user_name = h_user.name
-                                response += f"\n{rank - 1}. {h_user_name} {round(player_data_up[1], 1)}"
+                                if rank > 1:
+                                    player_data_up = ranked_list[rank - 1]
+                                    h_user = get_fetch_user(bot, player_data_up[0])
+                                    h_user_name = h_user.name
+                                    response += f"\n{rank - 1}. {h_user_name} {round(player_data_up[1], 1)}"
 
-                            response += f"\n{rank}. {ctx.author.name} {round(player_data[1],1)}"
+                                response += f"\n{rank}. {ctx.author.name} {round(player_data[1],1)}"
 
-                            if rank < len(ranked_list):
-                                player_data_down = ranked_list[rank + 1]
-                                d_user = get_fetch_user(bot, player_data_down[0])
+                                if rank < len(ranked_list):
+                                    player_data_down = ranked_list[rank + 1]
+                                    d_user = get_fetch_user(bot, player_data_down[0])
+                                    d_user_name = d_user.name
+                                    response += f"\n{rank + 1}. {d_user_name} {round(player_data_down[1], 1)}"
+                    else:
+                        if rank == rk and rk > 9:
+
+                            player_data_up = ranked_list[rank-1]
+                            h_user = get_fetch_user(bot,player_data_up[0])
+                            h_user_name = h_user.name
+                            response += f"\n{rank-1}. {h_user_name} {round(player_data_up[1], 1)}"
+
+                            user = get_fetch_user(bot,player_data[0])
+                            user_name = user.name
+                            response += f"\n{rank}. {user_name} {round(player_data[1], 1)}"
+
+                            if rk < len(ranked_list):
+                                player_data_down = ranked_list[rank+1]
+                                d_user = get_fetch_user(bot,player_data_down[0])
                                 d_user_name = d_user.name
-                                response += f"\n{rank + 1}. {d_user_name} {round(player_data_down[1], 1)}"
-                else:
-                    if rank == rk and rk > 9:
-
-                        player_data_up = ranked_list[rank-1]
-                        h_user = get_fetch_user(bot,player_data_up[0])
-                        h_user_name = h_user.name
-                        response += f"\n{rank-1}. {h_user_name} {round(player_data_up[1], 1)}"
-
-                        user = get_fetch_user(bot,player_data[0])
-                        user_name = user.name
-                        response += f"\n{rank}. {user_name} {round(player_data[1], 1)}"
-
-                        if rk < len(ranked_list):
-                            player_data_down = ranked_list[rank+1]
-                            d_user = get_fetch_user(bot,player_data_down[0])
-                            d_user_name = d_user.name
-                            response += f"\n{rank+1}. {d_user_name} {round(player_data_down[1], 1)}"
+                                response += f"\n{rank+1}. {d_user_name} {round(player_data_down[1], 1)}"
 
         embed = discord.Embed(description=response)
         await ctx.send(embed=embed)
